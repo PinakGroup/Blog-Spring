@@ -1,40 +1,31 @@
 package com.soyeyo.Blog.conrollers;
 
 import com.soyeyo.Blog.data.CategoryRepository;
+import com.soyeyo.Blog.dto.Pagination.PaginationDTO;
 import com.soyeyo.Blog.errors.InvalidUpdateException;
 import com.soyeyo.Blog.models.Category;
-import com.soyeyo.Blog.services.CategoryService;
+import com.soyeyo.Blog.services.PaginationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+
+@CrossOrigin(allowCredentials = "true",allowedHeaders = "*",origins = "*")
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
     @Autowired
     CategoryRepository categories;
 
-    @Value("${pagination.size.admin}")
-    private int TOPIC_PER_PAGE;
-
-    @Autowired
-    CategoryService categoryService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public Iterable<Category> getCategories(@RequestParam(defaultValue = "0" ) String page){
-       int page_no;
-        try {
-          page_no = Integer.parseInt(page);
-      }catch (Exception e){
-          page_no = 0;
-      }
+    public PaginationDTO getCategories(@RequestParam(defaultValue = "1" ) String page,
+                                       @RequestParam( defaultValue = "") String sort,
+                                       @RequestParam(defaultValue = "10")String per_page){
+        return PaginationService.<Category>getPagination(page,sort,per_page,categories,"categories");
 
-      if(page_no == 0)return categories.findAll();
-      return categoryService.formatAll(categories.findAll(PageRequest.of(page_no,TOPIC_PER_PAGE)));
     }
 
     @RequestMapping(method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -50,13 +41,14 @@ public class CategoryController {
         return optionalCategory.orElse(null);
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public Category updateCategory(@RequestBody Category category){
+    public Category updateCategory(@PathVariable int id ,@RequestBody Category category){
+        category.setCategoryId(id);
         if(!category.isValidUpdate(categories))throw new InvalidUpdateException("Invalid Request parameters : ensure name is not empty and id is valid");
-        Category currentCategory = categories.findById(category.getCategoryId()).get();
+        Category currentCategory = categories.findById(id).get();
         currentCategory.setName(category.getName());
-        return currentCategory;
+        return categories.save(currentCategory);
     }
 
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
