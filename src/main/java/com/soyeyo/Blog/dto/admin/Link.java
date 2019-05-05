@@ -1,4 +1,4 @@
-package com.soyeyo.Blog.dto.Pagination;
+package com.soyeyo.Blog.dto.admin;
 
 public class Link{
     private Pagination pagination;

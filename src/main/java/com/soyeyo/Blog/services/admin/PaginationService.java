@@ -1,8 +1,10 @@
-package com.soyeyo.Blog.services;
+package com.soyeyo.Blog.services.admin;
 
-import com.soyeyo.Blog.dto.Pagination.Link;
-import com.soyeyo.Blog.dto.Pagination.PaginationDTO;
+import com.soyeyo.Blog.dto.admin.Link;
+import com.soyeyo.Blog.dto.admin.PaginationDTO;
+import com.soyeyo.Blog.dto.admin.PostDTO;
 import com.soyeyo.Blog.models.Category;
+import com.soyeyo.Blog.models.Post;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -68,7 +70,10 @@ public class PaginationService{
 
         PaginationDTO<T> paginDTO = new PaginationDTO<>();
 
-        paginDTO.setData(getData(list));
+        if(!model.equals("post")){
+            paginDTO.setData(getData(list));
+        }
+
         paginDTO.setLinks(new Link(total,from,to,next_url,previous_url,pageNo,last_page,per_page));
         return paginDTO;
     }
@@ -80,6 +85,8 @@ public class PaginationService{
              //remove the posts from category
              if(t instanceof Category){
                  ((Category) t).setPosts(new ArrayList<>());
+             }else if(t instanceof Post){
+                 ((Post) t).getCategory().setPosts(new ArrayList<>());
              }
             ((ArrayList<T>) finalList).add(t);
         }

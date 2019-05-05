@@ -1,8 +1,17 @@
 package com.soyeyo.Blog.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
+
+import javax.annotation.Generated;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -25,6 +34,9 @@ public class Post {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @NotBlank @Type(type = "text")
+    private String preview;
+
     @OneToMany(mappedBy = "post")
     private List<Comment> comments;
 
@@ -32,9 +44,20 @@ public class Post {
     @JoinTable(name = "post_tag",joinColumns = {@JoinColumn(name = "post_post_id")},inverseJoinColumns = {@JoinColumn(name="tag_tag_id")})
     private List<Tag> tags;
 
+    @CreationTimestamp()
+    private LocalDateTime created;
 
-    public Post(){}
+    public Post(){
 
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
 
     public int getPostId() {
         return postId;
@@ -43,6 +66,14 @@ public class Post {
 
     public Category getCategory() {
         return category;
+    }
+
+    public String getPreview() {
+        return preview;
+    }
+
+    public void setPreview(String preview) {
+        this.preview = preview;
     }
 
     public void setCategory(Category category) {
@@ -89,12 +120,16 @@ public class Post {
         return title;
     }
 
-
-
     public void setTitle(String title) {
         this.title = title;
     }
 
-
-
+    @JsonIgnoreProperties
+    public boolean isValid() {
+        if(category != null && !slug.equals("") && !title.equals("")
+              && !body.equals("")){
+            return true;
+        }
+        return false;
+    }
 }

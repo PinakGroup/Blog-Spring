@@ -1,6 +1,4 @@
-package com.soyeyo.Blog.dto.Pagination;
-
-import java.util.List;
+package com.soyeyo.Blog.dto.admin;
 
 public class PaginationDTO<T>{
     private Link links;

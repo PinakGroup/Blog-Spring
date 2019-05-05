@@ -1,5 +1,6 @@
 package com.soyeyo.Blog.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.soyeyo.Blog.data.CategoryRepository;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

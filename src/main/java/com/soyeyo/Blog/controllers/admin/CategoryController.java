@@ -1,20 +1,21 @@
-package com.soyeyo.Blog.conrollers;
+package com.soyeyo.Blog.controllers.admin;
 
 import com.soyeyo.Blog.data.CategoryRepository;
-import com.soyeyo.Blog.dto.Pagination.PaginationDTO;
+import com.soyeyo.Blog.dto.admin.PaginationDTO;
 import com.soyeyo.Blog.errors.InvalidUpdateException;
 import com.soyeyo.Blog.models.Category;
-import com.soyeyo.Blog.services.PaginationService;
+import com.soyeyo.Blog.services.admin.PaginationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 
 @CrossOrigin(allowCredentials = "true",allowedHeaders = "*",origins = "*")
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("admin/categories")
 public class CategoryController {
     @Autowired
     CategoryRepository categories;
@@ -25,7 +26,6 @@ public class CategoryController {
                                        @RequestParam( defaultValue = "") String sort,
                                        @RequestParam(defaultValue = "10")String per_page){
         return PaginationService.<Category>getPagination(page,sort,per_page,categories,"categories");
-
     }
 
     @RequestMapping(method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -38,7 +38,12 @@ public class CategoryController {
     @RequestMapping(path = "/{id}",method = RequestMethod.GET)
     public Category getCategory(@PathVariable int id){
         Optional<Category> optionalCategory = categories.findById(id);
-        return optionalCategory.orElse(null);
+        if(optionalCategory.isPresent()){
+            Category category = optionalCategory.get();
+            category.setPosts(new ArrayList<>());
+            return category;
+        }
+        return null;
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
@@ -61,7 +66,6 @@ public class CategoryController {
         return true;
     }
 
-    //TODO
-    //get all posts in a category
+    //get post in category with pagination
 
 }
