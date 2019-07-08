@@ -18,8 +18,6 @@ public class Comment {
     @NotBlank
     private  String email;
 
-    private boolean approved;
-
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "post_id")
@@ -52,13 +50,6 @@ public class Comment {
         this.email = email;
     }
 
-    public boolean isApproved() {
-        return approved;
-    }
-
-    public void setApproved(boolean approved) {
-        this.approved = approved;
-    }
 
     public Post getPost() {
         return post;

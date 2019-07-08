@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @RequestMapping("admin/posts")
@@ -44,18 +45,21 @@ public class PostController {
     }
 
     @RequestMapping(path = "/{id}",method = RequestMethod.GET)
-    public Post getPost(@PathVariable int id){
+    public Post getPost(@PathVariable int id) throws Exception {
         Optional<Post> optionalPost = posts.findById(id);
-        return optionalPost.orElse(null);
+        if(!optionalPost.isPresent()) throw new Exception("Post not present");
+        Post post = optionalPost.get();
+        post.getCategory().setPosts(new ArrayList<>());
+        return post;
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public Post updatePost(@PathVariable int id ,@RequestBody Post post){
-        post.setPostId(id);
-        if(!post.isValid())throw new InvalidUpdateException("Invalid Request parameters : ensure all fields have values");
-
-        return posts.save(post);
+    public Post updatePost(@PathVariable int id ,@RequestBody PostDTO postDTO){
+        postDTO.setupPost(tags,categories);
+        if(!postDTO.getPost().isValid())throw new InvalidUpdateException("Invalid Request parameters : ensure all fields have values");
+        postDTO.getPost().setPostId(id);
+        return posts.save(postDTO.getPost());
     }
 
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
