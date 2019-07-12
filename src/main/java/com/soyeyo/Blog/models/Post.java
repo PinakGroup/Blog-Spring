@@ -30,6 +30,12 @@ public class Post {
     @NotBlank
     private String slug;
 
+    @NotBlank
+    private String img;
+
+    @NotBlank
+    private boolean featured = false;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -40,6 +46,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Comment> comments;
 
+
     @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(name = "post_tag",joinColumns = {@JoinColumn(name = "post_post_id")},inverseJoinColumns = {@JoinColumn(name="tag_tag_id")})
     private List<Tag> tags;
@@ -48,7 +55,7 @@ public class Post {
     private LocalDateTime created;
 
     public Post(){
-
+       this.img = "https://i.imgur.com/ZupsbLR.jpg";
     }
 
     public LocalDateTime getCreated() {
@@ -114,6 +121,22 @@ public class Post {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
     }
 
     public String getTitle() {
