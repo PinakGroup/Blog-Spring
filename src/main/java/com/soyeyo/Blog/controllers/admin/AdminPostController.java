@@ -18,7 +18,7 @@ import java.util.Optional;
 @RequestMapping("admin/posts")
 @RestController
 @CrossOrigin(allowCredentials = "true",allowedHeaders = "*",origins = "*")
-public class PostController {
+public class AdminPostController {
 
     @Autowired
     PostRepository posts;
@@ -29,12 +29,6 @@ public class PostController {
     @Autowired
     CategoryRepository categories;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public PaginationDTO getPosts(@RequestParam(defaultValue = "1" ) String page,
-                                       @RequestParam( defaultValue = "") String sort,
-                                       @RequestParam(defaultValue = "10")String per_page){
-        return PaginationService.<PostDTO>getPagination(page,sort,per_page,posts,"posts");
-    }
 
     @RequestMapping(method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
@@ -45,13 +39,16 @@ public class PostController {
     }
 
     @RequestMapping(path = "/{id}",method = RequestMethod.GET)
-    public Post getPost(@PathVariable int id) throws Exception {
+    public Post getPostById(@PathVariable int id) throws Exception {
         Optional<Post> optionalPost = posts.findById(id);
         if(!optionalPost.isPresent()) throw new Exception("Post not present");
         Post post = optionalPost.get();
         post.getCategory().setPosts(new ArrayList<>());
         return post;
     }
+
+
+
 
     @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
