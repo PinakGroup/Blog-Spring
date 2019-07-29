@@ -33,8 +33,8 @@ public class Post {
     @NotBlank
     private String img;
 
-    @NotBlank
-    private boolean featured = false;
+
+    private boolean featured;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")

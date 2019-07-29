@@ -3,17 +3,18 @@ package com.soyeyo.Blog.controllers.admin;
 import com.soyeyo.Blog.data.CategoryRepository;
 import com.soyeyo.Blog.data.PostRepository;
 import com.soyeyo.Blog.data.TagRepository;
-import com.soyeyo.Blog.dto.admin.PaginationDTO;
 import com.soyeyo.Blog.dto.admin.PostDTO;
 import com.soyeyo.Blog.errors.InvalidUpdateException;
 import com.soyeyo.Blog.models.Post;
-import com.soyeyo.Blog.services.admin.PaginationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
 
 @RequestMapping("admin/posts")
 @RestController
@@ -28,6 +29,9 @@ public class AdminPostController {
 
     @Autowired
     CategoryRepository categories;
+
+    @Value("${posts.featured.num}")
+    long featuredNum;
 
 
     @RequestMapping(method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -69,4 +73,31 @@ public class AdminPostController {
         return true;
     }
 
+    @RequestMapping(method = RequestMethod.PUT,value = "/featured/{id}")
+    private ResponseEntity<Map> putFeatured(@PathVariable int id){
+        long featuredN = 0;
+        for(Post p : posts.findPostsByFeatured(true)){
+            featuredN++;
+        }
+        System.out.println("count :"+featuredN);
+        System.out.println("Set :"+this.featuredNum);
+       if(featuredN >= this.featuredNum ){
+           return ResponseEntity.badRequest()
+                   .header("content-Type: application/json")
+                   .body(Collections.singletonMap("message","Already featured maximum posts"));
+       }
+
+        Optional<Post> post = posts.findById(id);
+        if(!post.isPresent()){
+            return ResponseEntity.badRequest()
+                    .header("content-Type: application/json")
+                    .body(Collections.singletonMap("message","pos not found !"));
+        }
+        Post p = post.get();
+        p.setFeatured(true);
+        posts.save(p);
+        return ResponseEntity.ok()
+                .header("content-Type: application/json")
+                .body(Collections.singletonMap("message","success"));
+    }
 }
