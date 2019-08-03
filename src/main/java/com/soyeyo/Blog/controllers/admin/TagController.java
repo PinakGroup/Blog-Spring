@@ -4,7 +4,7 @@ import com.soyeyo.Blog.data.TagRepository;
 import com.soyeyo.Blog.dto.admin.PaginationDTO;
 import com.soyeyo.Blog.errors.InvalidUpdateException;
 import com.soyeyo.Blog.models.Tag;
-import com.soyeyo.Blog.services.admin.PaginationService;
+import com.soyeyo.Blog.services.PaginationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

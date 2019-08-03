@@ -8,13 +8,10 @@ import com.soyeyo.Blog.errors.InvalidUpdateException;
 import com.soyeyo.Blog.models.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.*;
-import java.util.stream.Stream;
 
 @RequestMapping("admin/posts")
 @RestController
@@ -79,8 +76,7 @@ public class AdminPostController {
         for(Post p : posts.findPostsByFeatured(true)){
             featuredN++;
         }
-        System.out.println("count :"+featuredN);
-        System.out.println("Set :"+this.featuredNum);
+
        if(featuredN >= this.featuredNum ){
            return ResponseEntity.badRequest()
                    .header("content-Type: application/json")
