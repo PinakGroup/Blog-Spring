@@ -1,19 +1,10 @@
 package com.soyeyo.Blog.services;
 
 import com.soyeyo.Blog.data.PostRepository;
-import com.soyeyo.Blog.dto.admin.Link;
-import com.soyeyo.Blog.dto.admin.PaginationDTO;
 import com.soyeyo.Blog.models.Post;
 import com.soyeyo.Blog.models.Tag;
-import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Value;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.stream.Collectors;
-
-import static com.soyeyo.Blog.services.PaginationService.getData;
 
 public class SearchPaginationService {
     @Value("${url.path}")
